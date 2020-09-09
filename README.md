@@ -1,1 +1,1 @@
-whale是一个RPC框架
+whale(鲸鱼)是一个RPC框架
