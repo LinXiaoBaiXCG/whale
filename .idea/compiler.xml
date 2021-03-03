@@ -6,8 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="whale" />
+        <module name="whale-rpc-register" />
+        <module name="whale-rpc-example" />
+        <module name="whale-rpc-common" />
+        <module name="whale-rpc-protocol" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="test" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
