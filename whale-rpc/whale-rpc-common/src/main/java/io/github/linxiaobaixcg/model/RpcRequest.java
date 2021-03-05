@@ -1,5 +1,6 @@
 package io.github.linxiaobaixcg.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @date 2021/3/4 11:26
  */
 @Data
+@Builder
 public class RpcRequest implements Serializable {
 
     /**
