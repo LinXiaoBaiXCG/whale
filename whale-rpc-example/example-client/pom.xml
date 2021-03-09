@@ -33,6 +33,28 @@
 			<artifactId>whale-rpc-boot-starter</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+		<!--lombok插件-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.linxiaobaixcg.github</groupId>
+			<artifactId>whale-rpc-common</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>io.linxiaobaixcg.github</groupId>
+			<artifactId>whale-rpc-register</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>io.linxiaobaixcg.github</groupId>
+			<artifactId>whale-rpc-protocol</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

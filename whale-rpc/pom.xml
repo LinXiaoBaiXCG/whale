@@ -15,7 +15,6 @@
         <module>whale-rpc-common</module>
         <module>whale-rpc-register</module>
         <module>whale-rpc-protocol</module>
-        <module>whale-rpc-test</module>
     </modules>
 
     <properties>
@@ -25,6 +24,12 @@
         <lombok.version>1.18.18</lombok.version>
         <hutool-all.version>5.5.9</hutool-all.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
+        <protostuff.version>1.7.2</protostuff.version>
+        <kyro.version>5.0.3</kyro.version>
+        <msgpack.version>0.6.12</msgpack.version>
+        <hessian.version>4.0.65</hessian.version>
+        <netty-all.version>4.1.59.Final</netty-all.version>
+        <curator-version>2.5.0</curator-version>
     </properties>
 
     <dependencies>
@@ -46,6 +51,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
         </dependency>
     </dependencies>
 

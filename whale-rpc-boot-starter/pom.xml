@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>io.linxiaobaixcg.github</groupId>
-            <artifactId>whale-rpc</artifactId>
+            <artifactId>whale-rpc-protocol</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
