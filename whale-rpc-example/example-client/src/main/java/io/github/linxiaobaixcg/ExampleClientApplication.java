@@ -3,7 +3,6 @@ package io.github.linxiaobaixcg;
 import io.github.linxiaobaixcg.communication.netty.client.ProxyFactory;
 import io.github.linxiaobaixcg.service.DiscoverService;
 import io.github.linxiaobaixcg.service.HelloTestService;
-import io.github.linxiaobaixcg.service.LoadBalance;
 import io.github.linxiaobaixcg.service.impl.RandomLoadBalance;
 import io.github.linxiaobaixcg.service.impl.ZkDiscoverImpl;
 import lombok.extern.slf4j.Slf4j;

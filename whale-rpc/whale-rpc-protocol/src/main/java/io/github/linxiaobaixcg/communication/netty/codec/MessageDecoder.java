@@ -1,6 +1,5 @@
 package io.github.linxiaobaixcg.communication.netty.codec;
 
-import io.github.linxiaobaixcg.serialize.Serialize;
 import io.github.linxiaobaixcg.serialize.SerializeType;
 import io.github.linxiaobaixcg.serialize.SerializerEngine;
 import io.netty.buffer.ByteBuf;
