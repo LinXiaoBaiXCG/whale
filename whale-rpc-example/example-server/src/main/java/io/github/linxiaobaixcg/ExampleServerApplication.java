@@ -4,6 +4,7 @@ import io.github.linxiaobaixcg.communication.netty.server.NettyServer;
 import io.github.linxiaobaixcg.service.HelloTestService;
 import io.github.linxiaobaixcg.service.RegisterService;
 import io.github.linxiaobaixcg.service.impl.ZkRegisterCenterImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Arrays;

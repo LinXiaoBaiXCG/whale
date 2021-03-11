@@ -18,7 +18,7 @@ import java.net.InetSocketAddress;
 public class ZkRegisterCenterImpl implements RegisterService {
 
     /** 注册根节点 **/
-    public static final String ZK_REGISTER_PATH = "/test5";
+    public static final String ZK_REGISTER_PATH = "/test13";
 
     private String connectionAddress;
 

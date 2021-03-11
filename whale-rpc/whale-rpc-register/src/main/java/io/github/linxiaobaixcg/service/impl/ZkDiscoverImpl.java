@@ -37,7 +37,7 @@ public class ZkDiscoverImpl implements DiscoverService {
         curatorFramework.start();
     }
 
-    public String discover(String serviceName) {
+    public List<String> discover(String serviceName) {
         List<String> serviceAddresses;
         if (!serviceAddressMap.containsKey(serviceName)) {
             //
@@ -57,7 +57,7 @@ public class ZkDiscoverImpl implements DiscoverService {
         } else {
             serviceAddresses = serviceAddressMap.get(serviceName);
         }
-        return serviceAddresses.get(0);
+        return serviceAddresses;
     }
 
     /**

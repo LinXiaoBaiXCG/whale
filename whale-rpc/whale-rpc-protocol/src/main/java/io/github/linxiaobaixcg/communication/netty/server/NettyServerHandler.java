@@ -26,7 +26,7 @@ import java.util.Map;
  * @date 2021/3/8 11:34
  */
 @Slf4j
-public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
+public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     /**
      * 服务映射
@@ -38,10 +38,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-        log.debug("收到request:{}", s);
-        Object result = this.invoke(JSON.parseObject(s, RpcRequest.class));
-        ChannelFuture future = channelHandlerContext.writeAndFlush(JSON.toJSONString(result));
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcRequest msg) throws Exception {
+        log.debug("收到request:{}", msg);
+        Object result = this.invoke(msg);
+        ChannelFuture future = channelHandlerContext.writeAndFlush(result);
         future.addListener(ChannelFutureListener.CLOSE);
     }
 
@@ -60,6 +60,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
      */
     private Object invoke(RpcRequest request)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        RpcResponse rpcResponse = new RpcResponse();
         //获得服务名称
         String serviceName = request.getClassName();
         //获得版本号
@@ -74,13 +75,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> {
             serviceName = serviceName + "-" + version;
         }
         Object service = handlerMap.get(serviceName);
-        if (null == service) {
-            return RpcResponse.fail(ResponseCode.ERROR404, "未找到服务");
-        }
+
         Method method = service.getClass().getMethod(methodName, argTypes);
-        if (null == method) {
-            return RpcResponse.fail(ResponseCode.ERROR404, "未找到服务方法");
-        }
-        return RpcResponse.success(method.invoke(service, params));
+        rpcResponse.setResult(method.invoke(service, params));
+        return rpcResponse;
     }
 }

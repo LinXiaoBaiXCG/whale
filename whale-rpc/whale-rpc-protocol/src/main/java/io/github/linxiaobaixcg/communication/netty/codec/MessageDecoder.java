@@ -34,11 +34,6 @@ public class MessageDecoder extends ByteToMessageDecoder {
         if (dataLength < 0) {
             ctx.close();
         }
-        //若当前可以获取到的字节数小于实际长度,则直接返回,直到当前可以获取到的字节数等于实际长度
-        if (in.readableBytes() < dataLength) {
-            in.resetReaderIndex();
-            return;
-        }
         //读取完整的消息体字节数组
         byte[] data = new byte[dataLength];
         in.readBytes(data);

@@ -1,6 +1,7 @@
 package io.github.linxiaobaixcg.communication.netty.server;
 
 import io.github.linxiaobaixcg.annonation.WhaleRpcService;
+import io.github.linxiaobaixcg.communication.netty.client.NettyClient;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageDecoder;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageEncoder;
 import io.github.linxiaobaixcg.model.RpcRequest;
@@ -16,10 +17,13 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +57,6 @@ public class NettyServer {
      * 服务名称和服务对象的关系
      */
     private Map<String, Object> handlerMap = new HashMap<>();
-
-    private SerializeType serializeType = SerializeType.ProtoStuffSerializer;
 
     private RegisterService registerService;
 
@@ -91,14 +93,15 @@ public class NettyServer {
         serverBootstrap.group(eventLoopGroup)
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 1024)
+                .handler(new LoggingHandler())
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
-                        pipeline.addLast(new LengthFieldPrepender(4));
-                        pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
-                        pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
+                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                        ChannelPipeline pipeline = socketChannel.pipeline();
+                        // 编码器
+                        pipeline.addLast(new MessageEncoder(RpcResponse.class, NettyClient.serializeType));
+                        // 解码器
+                        pipeline.addLast(new MessageDecoder(RpcRequest.class, NettyClient.serializeType));
                         pipeline.addLast(new NettyServerHandler(handlerMap));
                     }
                 });

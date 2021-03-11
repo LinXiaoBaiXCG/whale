@@ -1,6 +1,5 @@
 package io.github.linxiaobaixcg.communication.netty.client;
 
-import com.alibaba.fastjson.JSON;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageDecoder;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageEncoder;
 import io.github.linxiaobaixcg.model.RpcRequest;
@@ -11,15 +10,9 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.AttributeKey;
-import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.PreDestroy;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -37,9 +30,11 @@ public class NettyClient {
 
     private Integer port;
 
-    private SerializeType serializeType = SerializeType.ProtoStuffSerializer;
+    public static SerializeType serializeType = SerializeType.KryoSerializer;
 
     private static Bootstrap bootstrap;
+
+    private static EventLoopGroup group = new NioEventLoopGroup();
 
     public NettyClient(String host, Integer port) {
         this.host = host;
@@ -47,31 +42,37 @@ public class NettyClient {
     }
 
     static  {
-        bootstrap = new Bootstrap();
-        EventLoopGroup group = new NioEventLoopGroup();
-        bootstrap.group(group)
-                //指定传输使用的Channel
-                .channel(NioSocketChannel.class)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .option(ChannelOption.TCP_NODELAY, true)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        ChannelPipeline pipeline = socketChannel.pipeline();
-                        pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
-                        pipeline.addLast(new LengthFieldPrepender(4));
-                        pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
-                        pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
-                        pipeline.addLast(new ClientHandler());
-                    }
-                });
+            bootstrap = new Bootstrap();
+            bootstrap.group(group)
+                    //指定传输使用的Channel
+                    .channel(NioSocketChannel.class)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            ChannelPipeline pipeline = socketChannel.pipeline();
+                            // 编码器
+                            pipeline.addLast(new MessageEncoder(RpcRequest.class, serializeType));
+                            // 解码器
+                            pipeline.addLast(new MessageDecoder(RpcResponse.class, serializeType));
+                            pipeline.addLast(new ClientHandler());
+                        }
+                    });
     }
 
     public RpcResponse send(RpcRequest request) throws InterruptedException {
         ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
         Channel channel = channelFuture.channel();
-        channel.writeAndFlush(JSON.toJSONString(request));
+        channel.writeAndFlush(request).addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                log.info("client send message: [{}]", request);
+            } else {
+                future.channel().close();
+                log.error("Send failed:", future.cause());
+            }
+        });
         //当通道关闭了，就继续往下走
         channelFuture.channel().closeFuture().sync();
         AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
@@ -103,12 +104,12 @@ public class NettyClient {
         });
     }
 
-    public static class ClientHandler extends SimpleChannelInboundHandler<String> {
+    public static class ClientHandler extends SimpleChannelInboundHandler {
 
         @Override
-        protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-            log.debug("收到response:{}", s);
-            RpcResponse response = JSON.parseObject(s, RpcResponse.class);
+        protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object msg) throws Exception {
+            log.debug("收到response:{}", msg);
+            RpcResponse response = (RpcResponse)msg;
             AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
             channelHandlerContext.channel().attr(key).set(response);
             channelHandlerContext.channel().close();
@@ -120,5 +121,6 @@ public class NettyClient {
             log.error("Unexpected exception from upstream.", cause);
             super.exceptionCaught(ctx, cause);
         }
+
     }
 }
