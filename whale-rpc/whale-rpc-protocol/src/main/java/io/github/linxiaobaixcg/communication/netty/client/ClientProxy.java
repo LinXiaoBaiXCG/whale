@@ -7,7 +7,7 @@ import io.github.linxiaobaixcg.model.RpcRequest;
 import io.github.linxiaobaixcg.model.RpcResponse;
 import io.github.linxiaobaixcg.service.DiscoverService;
 import io.github.linxiaobaixcg.service.LoadBalance;
-import io.github.linxiaobaixcg.service.LoadBalanceHandler;
+import io.github.linxiaobaixcg.handler.LoadBalanceHandler;
 import io.github.linxiaobaixcg.service.impl.ZkDiscoverImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;

@@ -1,7 +1,5 @@
 package io.github.linxiaobaixcg.enums;
 
-import java.util.Random;
-
 /**
  * 负载均衡策略枚举
  */

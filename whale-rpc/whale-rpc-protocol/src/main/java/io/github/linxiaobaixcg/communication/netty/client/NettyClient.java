@@ -2,9 +2,10 @@ package io.github.linxiaobaixcg.communication.netty.client;
 
 import io.github.linxiaobaixcg.communication.netty.codec.MessageDecoder;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageEncoder;
+import io.github.linxiaobaixcg.config.GlobalConfig;
 import io.github.linxiaobaixcg.model.RpcRequest;
 import io.github.linxiaobaixcg.model.RpcResponse;
-import io.github.linxiaobaixcg.serialize.SerializeType;
+import io.github.linxiaobaixcg.enums.SerializeType;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -30,8 +31,6 @@ public class NettyClient {
 
     private Integer port;
 
-    public static SerializeType serializeType = SerializeType.ProtoStuffSerializer;
-
     private static Bootstrap bootstrap;
 
     private static EventLoopGroup group = new NioEventLoopGroup();
@@ -54,9 +53,9 @@ public class NettyClient {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             // 编码器
-                            pipeline.addLast(new MessageEncoder(RpcRequest.class, serializeType));
+                            pipeline.addLast(new MessageEncoder(RpcRequest.class, GlobalConfig.serializeType));
                             // 解码器
-                            pipeline.addLast(new MessageDecoder(RpcResponse.class, serializeType));
+                            pipeline.addLast(new MessageDecoder(RpcResponse.class, GlobalConfig.serializeType));
                             pipeline.addLast(new ClientHandler());
                         }
                     });

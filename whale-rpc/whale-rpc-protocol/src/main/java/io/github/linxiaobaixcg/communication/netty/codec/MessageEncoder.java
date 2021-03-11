@@ -1,6 +1,7 @@
 package io.github.linxiaobaixcg.communication.netty.codec;
 
-import io.github.linxiaobaixcg.serialize.SerializeType;
+import io.github.linxiaobaixcg.enums.SerializeType;
+import io.github.linxiaobaixcg.handler.SerializeHandler;
 import io.github.linxiaobaixcg.serialize.SerializerEngine;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,13 +18,13 @@ public class MessageEncoder extends MessageToByteEncoder {
 
     private Class<?> clazz;
 
-    //序列化类型
+    /** 序列化类型 */
     private SerializeType serializeType;
 
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object message, ByteBuf byteBuf) throws Exception {
         if (clazz != null && clazz.isInstance(message)) {
-            byte[] bytes = SerializerEngine.serialize(message, serializeType.getSerializeType());
+            byte[] bytes = SerializeHandler.serialize(message, serializeType);
             byteBuf.writeInt(bytes.length);
             byteBuf.writeBytes(bytes);
         }

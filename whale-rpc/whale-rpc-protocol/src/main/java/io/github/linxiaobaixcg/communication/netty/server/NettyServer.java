@@ -4,6 +4,7 @@ import io.github.linxiaobaixcg.annotation.WhaleRpcService;
 import io.github.linxiaobaixcg.communication.netty.client.NettyClient;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageDecoder;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageEncoder;
+import io.github.linxiaobaixcg.config.GlobalConfig;
 import io.github.linxiaobaixcg.model.RpcRequest;
 import io.github.linxiaobaixcg.model.RpcResponse;
 import io.github.linxiaobaixcg.service.RegisterService;
@@ -86,9 +87,9 @@ public class NettyServer {
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         // 编码器
-                        pipeline.addLast(new MessageEncoder(RpcResponse.class, NettyClient.serializeType));
+                        pipeline.addLast(new MessageEncoder(RpcResponse.class, GlobalConfig.serializeType));
                         // 解码器
-                        pipeline.addLast(new MessageDecoder(RpcRequest.class, NettyClient.serializeType));
+                        pipeline.addLast(new MessageDecoder(RpcRequest.class, GlobalConfig.serializeType));
                         pipeline.addLast(new NettyServerHandler(handlerMap));
                     }
                 });
@@ -113,13 +114,13 @@ public class NettyServer {
      * @param serverBootstrap
      * @param port
      */
-    public void bind(final ServerBootstrap serverBootstrap, String serviceIp,int port) {
-        serverBootstrap.bind(serviceIp,port).addListener(future -> {
+    public void bind(final ServerBootstrap serverBootstrap, String serviceIp, int port) {
+        serverBootstrap.bind(serviceIp, port).addListener(future -> {
             if (future.isSuccess()) {
                 log.info("端口[ {} ] 绑定成功", port);
             } else {
                 log.error("端口[ {} ] 绑定失败", port);
-                bind(serverBootstrap, serviceIp,port + 1);
+                bind(serverBootstrap, serviceIp, port + 1);
             }
         });
     }

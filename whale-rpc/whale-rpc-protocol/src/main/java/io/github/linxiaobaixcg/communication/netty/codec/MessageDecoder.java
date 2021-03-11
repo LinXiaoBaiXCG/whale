@@ -1,6 +1,7 @@
 package io.github.linxiaobaixcg.communication.netty.codec;
 
-import io.github.linxiaobaixcg.serialize.SerializeType;
+import io.github.linxiaobaixcg.enums.SerializeType;
+import io.github.linxiaobaixcg.handler.SerializeHandler;
 import io.github.linxiaobaixcg.serialize.SerializerEngine;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -38,7 +39,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
         in.readBytes(data);
 
         //将字节数组反序列化为java对象(SerializerEngine参考序列化与反序列化章节)
-        Object obj = SerializerEngine.deserialize(data, clazz, serializeType.getSerializeType());
+        Object obj = SerializeHandler.deserialize(data, clazz, serializeType);
         list.add(obj);
     }
 }

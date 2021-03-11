@@ -1,6 +1,7 @@
-package io.github.linxiaobaixcg.service;
+package io.github.linxiaobaixcg.handler;
 
 import io.github.linxiaobaixcg.enums.LoadBalanceStrategy;
+import io.github.linxiaobaixcg.service.LoadBalance;
 import io.github.linxiaobaixcg.service.impl.RandomLoadBalance;
 import io.github.linxiaobaixcg.service.impl.RoundRobinLoadBalance;
 
