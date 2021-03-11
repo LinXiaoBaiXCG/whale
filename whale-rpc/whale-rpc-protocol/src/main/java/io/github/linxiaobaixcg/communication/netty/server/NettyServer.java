@@ -1,6 +1,6 @@
 package io.github.linxiaobaixcg.communication.netty.server;
 
-import io.github.linxiaobaixcg.annonation.WhaleRpcService;
+import io.github.linxiaobaixcg.annotation.WhaleRpcService;
 import io.github.linxiaobaixcg.communication.netty.client.NettyClient;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageDecoder;
 import io.github.linxiaobaixcg.communication.netty.codec.MessageEncoder;

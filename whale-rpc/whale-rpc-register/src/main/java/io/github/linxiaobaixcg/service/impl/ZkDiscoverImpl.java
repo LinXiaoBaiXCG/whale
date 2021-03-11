@@ -30,10 +30,11 @@ public class ZkDiscoverImpl implements DiscoverService {
 
     public ZkDiscoverImpl(String connectionAddress) {
         this.connectionAddress = connectionAddress;
-        curatorFramework = CuratorFrameworkFactory.builder().
-                connectString(connectionAddress).
-                sessionTimeoutMs(15000).
-                retryPolicy(new ExponentialBackoffRetry(1000, 10)).build();
+        curatorFramework = CuratorFrameworkFactory.builder()
+                .connectString(connectionAddress)
+                .sessionTimeoutMs(15000)
+                .retryPolicy(new ExponentialBackoffRetry(1000, 10))
+                .build();
         curatorFramework.start();
     }
 
@@ -41,7 +42,7 @@ public class ZkDiscoverImpl implements DiscoverService {
         List<String> serviceAddresses;
         if (!serviceAddressMap.containsKey(serviceName)) {
             //
-            String path =  ZkRegisterCenterImpl.ZK_REGISTER_PATH + "/" +serviceName;
+            String path = ZkRegisterCenterImpl.ZK_REGISTER_PATH + "/" + serviceName;
             try {
                 serviceAddresses = curatorFramework.getChildren().forPath(path);
                 serviceAddressMap.put(serviceName, serviceAddresses);

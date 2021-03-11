@@ -1,4 +1,4 @@
-package io.github.linxiaobaixcg.annonation;
+package io.github.linxiaobaixcg.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

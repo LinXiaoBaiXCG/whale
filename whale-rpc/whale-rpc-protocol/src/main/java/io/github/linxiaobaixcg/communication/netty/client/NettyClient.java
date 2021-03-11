@@ -30,7 +30,7 @@ public class NettyClient {
 
     private Integer port;
 
-    public static SerializeType serializeType = SerializeType.KryoSerializer;
+    public static SerializeType serializeType = SerializeType.ProtoStuffSerializer;
 
     private static Bootstrap bootstrap;
 

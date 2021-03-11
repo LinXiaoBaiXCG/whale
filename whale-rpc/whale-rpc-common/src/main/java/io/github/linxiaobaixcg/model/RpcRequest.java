@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.msgpack.annotation.Message;
 
 import java.io.Serializable;
 
@@ -16,7 +17,10 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Message
 public class RpcRequest implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * 请求对象ID

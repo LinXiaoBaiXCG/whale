@@ -11,4 +11,11 @@
 
     <artifactId>whale-rpc-load-balance</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.linxiaobaixcg.github</groupId>
+            <artifactId>whale-rpc-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

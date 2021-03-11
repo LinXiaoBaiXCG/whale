@@ -16,7 +16,7 @@ import org.apache.zookeeper.CreateMode;
 public class ZkRegisterCenterImpl implements RegisterService {
 
     /** 注册根节点 **/
-    public static final String ZK_REGISTER_PATH = "/test13";
+    public static final String ZK_REGISTER_PATH = "/test7";
 
     private String connectionAddress;
 

@@ -1,6 +1,6 @@
-package io.github.linxiaobaixcg.annonation;
+package io.github.linxiaobaixcg.annotation;
 
-import io.github.linxiaobaixcg.enums.LoadBalanceEnum;
+import io.github.linxiaobaixcg.enums.LoadBalanceStrategy;
 
 import java.lang.annotation.*;
 
@@ -25,5 +25,5 @@ public @interface WhaleRPC {
      * 负载均衡
      * @return
      */
-    LoadBalanceEnum loadBalance();
+    LoadBalanceStrategy loadBalance() default LoadBalanceStrategy.DEFAULT;
 }

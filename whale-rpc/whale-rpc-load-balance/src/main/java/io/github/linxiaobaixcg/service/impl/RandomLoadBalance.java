@@ -11,6 +11,7 @@ import java.util.Random;
  * @date 2021/3/10 14:45
  */
 public class RandomLoadBalance implements LoadBalance {
+
     public String selectServiceAddress(List<String> serviceAddresses) {
         Random random = new Random();
         return serviceAddresses.get(random.nextInt(serviceAddresses.size()));

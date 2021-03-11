@@ -1,4 +1,7 @@
-server:
-  port: 8081
+
+
 whale:
   enable: true
+
+server:
+  port: 8081
