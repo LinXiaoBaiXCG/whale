@@ -28,5 +28,10 @@
             <artifactId>spring-boot-starter</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.linxiaobaixcg.github</groupId>
+            <artifactId>whale-rpc-load-balance</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
