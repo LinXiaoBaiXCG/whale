@@ -50,6 +50,7 @@ public class ClientProxy<T> implements InvocationHandler {
         if (null != version && !"".equals(version)) {
             serviceName += "-" + version;
         }
+        // TODO 修改为全局配置或者自定义配置文件
         discoverService = new ZkDiscoverImpl("127.0.0.1:2181");
         // 根据服务名获取服务地址
         List<String> servicePaths = discoverService.discover(serviceName);

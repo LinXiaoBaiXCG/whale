@@ -92,6 +92,7 @@ public class NettyClient {
     }
 
     public RpcResponse send(RpcRequest request) throws InterruptedException {
+        // TODO 优化异步调用和channel封装
         channel.writeAndFlush(request).addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
                 log.info("client send message: [{}]", request);

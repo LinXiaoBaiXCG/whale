@@ -19,7 +19,7 @@ whale
 └── whale-rpc-example -- 示例
          ├── example-client -- 客户端
          ├── example-server -- 服务端
-         └── example-server1 -- 服务端
+         └── example-server1 -- 服务端1
 ~~~
 
 ## 如何运行
@@ -30,3 +30,9 @@ whale
 5. 运行客户端
 
 ## TODO
+1. 客户端异步调用，支持Future机制，支持回调函数callback
+2. 服务端异步多线程处理客户端请求
+3. 多注册中心支持
+4. 添加LRU、LFU、一致性HASH负载均衡
+5. 支持自定义Filter
+6. Netty重用Channel避免重复连接服务端
