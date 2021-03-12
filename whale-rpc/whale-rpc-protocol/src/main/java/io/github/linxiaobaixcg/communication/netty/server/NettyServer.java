@@ -16,11 +16,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lcq
@@ -90,6 +93,8 @@ public class NettyServer {
                         pipeline.addLast(new MessageEncoder(RpcResponse.class, GlobalConfig.serializeType));
                         // 解码器
                         pipeline.addLast(new MessageDecoder(RpcRequest.class, GlobalConfig.serializeType));
+                        // 心跳控制
+                        pipeline.addLast(new IdleStateHandler(60,10,0, TimeUnit.SECONDS));
                         pipeline.addLast(new NettyServerHandler(handlerMap));
                     }
                 });

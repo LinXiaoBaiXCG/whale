@@ -12,11 +12,11 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RpcResponse msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcResponse msg) throws Exception {
         log.debug("收到response:{}", msg);
         AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
-        ctx.channel().attr(key).set(msg);
-        ctx.channel().close();
+        channelHandlerContext.channel().attr(key).set(msg);
+        channelHandlerContext.channel().close();
     }
 
     @Override

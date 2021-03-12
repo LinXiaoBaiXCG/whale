@@ -53,7 +53,6 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
      */
     private Object invoke(RpcRequest request)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        RpcResponse rpcResponse = new RpcResponse();
         //获得服务名称
         String serviceName = request.getClassName();
         //获得版本号
@@ -70,6 +69,9 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         Object service = handlerMap.get(serviceName);
 
         Method method = service.getClass().getMethod(methodName, argTypes);
+        RpcResponse rpcResponse = new RpcResponse();
+        rpcResponse.setRequestId(request.getRequestId());
+        rpcResponse.setMsg("success");
         rpcResponse.setResult(method.invoke(service, params));
         return rpcResponse;
     }

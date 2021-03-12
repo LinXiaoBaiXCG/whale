@@ -66,7 +66,9 @@ public class ClientProxy<T> implements InvocationHandler {
         String host = servicePath.split(":")[0];
         int port = Integer.parseInt(servicePath.split(":")[1]);
         // 通过netty发起请求
-        RpcResponse response = new NettyClient(host, port).send(rpcRequest);
+        NettyClient nettyClient = new NettyClient(host, port);
+        nettyClient.connect();
+        RpcResponse response = nettyClient.send(rpcRequest);
         if (response == null) {
             throw new RuntimeException("调用服务失败,servicePath:" + servicePath);
         }
