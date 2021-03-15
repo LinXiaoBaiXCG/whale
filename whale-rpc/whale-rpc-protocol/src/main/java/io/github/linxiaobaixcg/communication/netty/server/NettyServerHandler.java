@@ -1,5 +1,7 @@
 package io.github.linxiaobaixcg.communication.netty.server;
 
+import io.github.linxiaobaixcg.enums.HeartBeatType;
+import io.github.linxiaobaixcg.enums.MessageType;
 import io.github.linxiaobaixcg.model.RpcRequest;
 import io.github.linxiaobaixcg.model.RpcResponse;
 import io.netty.channel.ChannelFuture;
@@ -33,7 +35,18 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcRequest msg) throws Exception {
         log.debug("收到request:{}", msg);
-        Object result = this.invoke(msg);
+        Object result;
+        if (MessageType.DATA.equals(msg.getMessageType())){
+            result = this.invoke(msg);
+        }else if (MessageType.HEARTBEAT.equals(msg.getMessageType())){
+            RpcResponse rpcResponse = new RpcResponse();
+            rpcResponse.setMessageType(MessageType.HEARTBEAT);
+            result = rpcResponse;
+            log.info("收到心跳包");
+            log.info(HeartBeatType.PONG.name());
+        } else {
+            throw new IllegalStateException("请求异常");
+        }
         ChannelFuture future = channelHandlerContext.writeAndFlush(result);
         future.addListener(ChannelFutureListener.CLOSE);
     }
@@ -73,6 +86,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         rpcResponse.setRequestId(request.getRequestId());
         rpcResponse.setMsg("success");
         rpcResponse.setResult(method.invoke(service, params));
+        rpcResponse.setMessageType(MessageType.DATA);
         return rpcResponse;
     }
 }

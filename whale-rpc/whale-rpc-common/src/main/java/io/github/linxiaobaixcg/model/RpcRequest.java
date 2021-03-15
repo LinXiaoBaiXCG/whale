@@ -1,5 +1,7 @@
 package io.github.linxiaobaixcg.model;
 
+import io.github.linxiaobaixcg.enums.HeartBeatType;
+import io.github.linxiaobaixcg.enums.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,4 +46,9 @@ public class RpcRequest implements Serializable {
      * 版本号
      */
     private String version;
+
+    /**
+     * 消息类型
+     */
+    private MessageType messageType;
 }

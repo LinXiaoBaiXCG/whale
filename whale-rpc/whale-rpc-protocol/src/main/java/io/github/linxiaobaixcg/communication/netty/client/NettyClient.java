@@ -14,9 +14,11 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.AttributeKey;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.data.Id;
 
+import java.net.InetSocketAddress;
 import java.util.Date;
 import java.util.concurrent.*;
 
@@ -28,7 +30,7 @@ import java.util.concurrent.*;
 @Slf4j
 public class NettyClient {
 
-    private Channel channel;
+    private ChannelProvider channelProvider;
 
     private String host;
 
@@ -46,6 +48,7 @@ public class NettyClient {
     }
 
     public void connect() throws InterruptedException {
+        try {
         bootstrap = new Bootstrap();
         bootstrap.group(group)
                 //指定传输使用的Channel
@@ -66,9 +69,8 @@ public class NettyClient {
                         pipeline.addLast(new NettyClientHandler());
                     }
                 });
-        try {
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
-            channel = channelFuture.channel();
+            this.channelProvider = new ChannelProvider();
         } finally {
             scheduledExecutorService.execute(new Runnable() {
                 @Override
@@ -91,19 +93,45 @@ public class NettyClient {
 
     public CompletableFuture<RpcResponse> send(RpcRequest request) throws InterruptedException {
         CompletableFuture<RpcResponse> responseCompletableFuture = new CompletableFuture<>();
-        // TODO 优化异步调用和channel封装
+        Channel channel = getChannel(new InetSocketAddress(host, port));
         if (channel.isActive()){
             NettyClientHandler.RESPONSE_FUTURES_FUTURE_MAP.put(request.getRequestId(), responseCompletableFuture);
             channel.writeAndFlush(request).addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
-                    log.info("client send message: [{}]", request);
+                    log.info("发送消息成功: [{}]", request);
                 } else {
                     future.channel().close();
-                    log.error("Send failed:", future.cause());
+                    log.error("发送失败:", future.cause());
                 }
             });
         }
         return responseCompletableFuture;
     }
 
+    public Channel getChannel(InetSocketAddress inetSocketAddress) {
+        Channel channel = channelProvider.get(inetSocketAddress);
+        if (channel == null) {
+            channel = doConnect(inetSocketAddress);
+            channelProvider.set(inetSocketAddress, channel);
+        }
+        return channel;
+    }
+
+    @SneakyThrows
+    public Channel doConnect(InetSocketAddress inetSocketAddress) {
+        CompletableFuture<Channel> completableFuture = new CompletableFuture<>();
+        bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                log.info("The client has connected [{}] successful!", inetSocketAddress.toString());
+                completableFuture.complete(future.channel());
+            } else {
+                throw new IllegalStateException();
+            }
+        });
+        return completableFuture.get();
+    }
+
+    public void close() {
+        group.shutdownGracefully();
+    }
 }

@@ -1,5 +1,6 @@
 package io.github.linxiaobaixcg.model;
 
+import io.github.linxiaobaixcg.enums.MessageType;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -22,4 +23,7 @@ public class RpcResponse implements Serializable {
 
     /** 返回实体 */
     private Object result;
+
+    /** 消息类型 */
+    private MessageType messageType;
 }

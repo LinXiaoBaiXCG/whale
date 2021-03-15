@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.sun.corba.se.impl.orbutil.closure.Future;
 import io.github.linxiaobaixcg.config.GlobalConfig;
 import io.github.linxiaobaixcg.enums.LoadBalanceStrategy;
+import io.github.linxiaobaixcg.enums.MessageType;
 import io.github.linxiaobaixcg.model.RpcRequest;
 import io.github.linxiaobaixcg.model.RpcResponse;
 import io.github.linxiaobaixcg.service.DiscoverService;
@@ -47,13 +48,13 @@ public class ClientProxy<T> implements InvocationHandler {
         rpcRequest.setParameters(args);
         rpcRequest.setParameterTypes(method.getParameterTypes());
         rpcRequest.setVersion(version);
+        rpcRequest.setMessageType(MessageType.DATA);
         log.info("请求内容: {}", rpcRequest);
         String serviceName = method.getDeclaringClass().getName();
         if (null != version && !"".equals(version)) {
             serviceName += "-" + version;
         }
-        // TODO 修改为全局配置或者自定义配置文件
-        discoverService = new ZkDiscoverImpl("127.0.0.1:2181");
+        discoverService = new ZkDiscoverImpl(GlobalConfig.ZK_ADDRESS);
         // 根据服务名获取服务地址
         List<String> servicePaths = discoverService.discover(serviceName);
         if (CollectionUtils.isEmpty(servicePaths)) {
@@ -68,7 +69,7 @@ public class ClientProxy<T> implements InvocationHandler {
         String servicePath = loadBalance.selectServiceAddress(servicePaths);
         String host = servicePath.split(":")[0];
         int port = Integer.parseInt(servicePath.split(":")[1]);
-        // 通过netty发起请求
+        // 通过netty发起异步调用
         NettyClient nettyClient = new NettyClient(host, port);
         nettyClient.connect();
         CompletableFuture<RpcResponse> responseCompletableFuture = nettyClient.send(rpcRequest);

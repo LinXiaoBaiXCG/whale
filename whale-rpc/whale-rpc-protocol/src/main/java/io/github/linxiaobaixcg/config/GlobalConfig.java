@@ -19,4 +19,9 @@ public class GlobalConfig {
      * 全局序列化配置（默认为protobuf）
      */
     public static SerializeType serializeType = SerializeType.Default;
+
+    /**
+     * zookeeper地址
+     */
+    public static final String ZK_ADDRESS = "127.0.0.1:2181";
 }

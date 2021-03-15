@@ -105,7 +105,6 @@ public class NettyServer {
             try {
                 registerService.register(serviceName, serviceIp + ":" + servicePort);
             } catch (Exception e) {
-
                 log.error("服务注册失败,e:{}", e.getMessage());
                 throw new RuntimeException("服务注册失败");
             }
