@@ -1,6 +1,5 @@
 package io.github.linxiaobaixcg.model;
 
-import io.github.linxiaobaixcg.enums.HeartBeatType;
 import io.github.linxiaobaixcg.enums.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

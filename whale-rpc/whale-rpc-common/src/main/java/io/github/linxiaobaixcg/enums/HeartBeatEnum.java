@@ -1,13 +1,13 @@
 package io.github.linxiaobaixcg.enums;
 
-public enum HeartBeatType {
+public enum HeartBeatEnum {
 
     PING("ping"),
     PONG("pong");
 
     private String type;
 
-    HeartBeatType(String type) {
+    HeartBeatEnum(String type) {
         this.type = type;
     }
 }

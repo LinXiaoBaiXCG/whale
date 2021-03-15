@@ -1,6 +1,6 @@
 package io.github.linxiaobaixcg.communication.netty.server;
 
-import io.github.linxiaobaixcg.enums.HeartBeatType;
+import io.github.linxiaobaixcg.enums.HeartBeatEnum;
 import io.github.linxiaobaixcg.enums.MessageType;
 import io.github.linxiaobaixcg.model.RpcRequest;
 import io.github.linxiaobaixcg.model.RpcResponse;
@@ -43,7 +43,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
             rpcResponse.setMessageType(MessageType.HEARTBEAT);
             result = rpcResponse;
             log.info("收到心跳包");
-            log.info(HeartBeatType.PONG.name());
+            log.info(HeartBeatEnum.PONG.name());
         } else {
             throw new IllegalStateException("请求异常");
         }

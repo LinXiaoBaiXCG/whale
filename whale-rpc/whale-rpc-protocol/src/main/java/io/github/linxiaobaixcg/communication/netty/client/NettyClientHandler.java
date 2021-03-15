@@ -1,7 +1,7 @@
 package io.github.linxiaobaixcg.communication.netty.client;
 
 
-import io.github.linxiaobaixcg.enums.HeartBeatType;
+import io.github.linxiaobaixcg.enums.HeartBeatEnum;
 import io.github.linxiaobaixcg.enums.MessageType;
 import io.github.linxiaobaixcg.model.RpcRequest;
 import io.github.linxiaobaixcg.model.RpcResponse;
@@ -51,7 +51,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
                 //可以选择重新连接
             } else if (idleStateEvent.state().equals(IdleState.WRITER_IDLE)) {
                 System.out.println("长期未向服务器发送数据");
-                log.info(HeartBeatType.PING.name());
+                log.info(HeartBeatEnum.PING.name());
                 //发送心跳包
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setMessageType(MessageType.HEARTBEAT);
