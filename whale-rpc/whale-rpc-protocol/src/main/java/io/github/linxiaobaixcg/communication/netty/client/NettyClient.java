@@ -15,12 +15,10 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.zookeeper.data.Id;
 
 import java.util.Date;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author lcq
@@ -91,20 +89,21 @@ public class NettyClient {
         }
     }
 
-    public RpcResponse send(RpcRequest request) throws InterruptedException {
+    public CompletableFuture<RpcResponse> send(RpcRequest request) throws InterruptedException {
+        CompletableFuture<RpcResponse> responseCompletableFuture = new CompletableFuture<>();
         // TODO 优化异步调用和channel封装
-        channel.writeAndFlush(request).addListener((ChannelFutureListener) future -> {
-            if (future.isSuccess()) {
-                log.info("client send message: [{}]", request);
-            } else {
-                future.channel().close();
-                log.error("Send failed:", future.cause());
-            }
-        });
-        //当通道关闭了，就继续往下走
-        channel.closeFuture().sync();
-        AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
-        return channel.attr(key).get();
+        if (channel.isActive()){
+            NettyClientHandler.RESPONSE_FUTURES_FUTURE_MAP.put(request.getRequestId(), responseCompletableFuture);
+            channel.writeAndFlush(request).addListener((ChannelFutureListener) future -> {
+                if (future.isSuccess()) {
+                    log.info("client send message: [{}]", request);
+                } else {
+                    future.channel().close();
+                    log.error("Send failed:", future.cause());
+                }
+            });
+        }
+        return responseCompletableFuture;
     }
 
 }

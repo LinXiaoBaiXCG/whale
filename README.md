@@ -7,6 +7,7 @@ whale-rpc是一个基于Netty的高性能、高可用Java RPC框架。
 - 基于Netty支持心跳检测机制和断连重连
 - 基于Zookeeper实现服务注册与服务发现
 - 支持服务多版本和分组
+- 支持客户端异步调用
 ## 项目结构
 ~~~
 whale
@@ -30,9 +31,8 @@ whale
 5. 运行客户端
 
 ## TODO
-1. 客户端异步调用，支持Future机制，支持回调函数callback
-2. 服务端异步多线程处理客户端请求
-3. 多注册中心支持
-4. 添加LRU、LFU、一致性HASH负载均衡
-5. 支持自定义Filter
-6. Netty重用Channel避免重复连接服务端
+1. 服务端异步多线程处理客户端请求
+2. 多注册中心支持
+3. 添加LRU、LFU、一致性HASH负载均衡
+4. 支持自定义Filter
+5. Netty重用Channel避免重复连接服务端

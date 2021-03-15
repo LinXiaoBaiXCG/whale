@@ -7,16 +7,24 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Slf4j
 public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
 
+    public static final Map<String, CompletableFuture<RpcResponse>> RESPONSE_FUTURES_FUTURE_MAP = new ConcurrentHashMap<>();
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcResponse msg) throws Exception {
         log.debug("收到response:{}", msg);
-        AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
-        channelHandlerContext.channel().attr(key).set(msg);
-        channelHandlerContext.channel().close();
+        CompletableFuture<RpcResponse> responseCompletableFuture = RESPONSE_FUTURES_FUTURE_MAP.remove(msg.getRequestId());
+        if (null != responseCompletableFuture) {
+            responseCompletableFuture.complete(msg);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     @Override

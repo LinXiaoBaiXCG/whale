@@ -1,6 +1,7 @@
 package io.github.linxiaobaixcg.communication.netty.client;
 
 import cn.hutool.core.util.IdUtil;
+import com.sun.corba.se.impl.orbutil.closure.Future;
 import io.github.linxiaobaixcg.config.GlobalConfig;
 import io.github.linxiaobaixcg.enums.LoadBalanceStrategy;
 import io.github.linxiaobaixcg.model.RpcRequest;
@@ -15,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lcq
@@ -69,7 +71,8 @@ public class ClientProxy<T> implements InvocationHandler {
         // 通过netty发起请求
         NettyClient nettyClient = new NettyClient(host, port);
         nettyClient.connect();
-        RpcResponse response = nettyClient.send(rpcRequest);
+        CompletableFuture<RpcResponse> responseCompletableFuture = nettyClient.send(rpcRequest);
+        RpcResponse response = responseCompletableFuture.get();
         if (response == null) {
             throw new RuntimeException("调用服务失败,servicePath:" + servicePath);
         }
