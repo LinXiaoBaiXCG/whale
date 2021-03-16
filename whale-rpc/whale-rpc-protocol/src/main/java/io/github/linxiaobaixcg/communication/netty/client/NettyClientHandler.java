@@ -46,18 +46,12 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent){
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
-            if (idleStateEvent.state().equals(IdleState.READER_IDLE)) {
-                System.out.println("长期没收到服务器推送数据");
-                //可以选择重新连接
-            } else if (idleStateEvent.state().equals(IdleState.WRITER_IDLE)) {
-                System.out.println("长期未向服务器发送数据");
+            if (idleStateEvent.state().equals(IdleState.WRITER_IDLE)) {
                 log.info(HeartBeatEnum.PING.name());
                 //发送心跳包
                 RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setMessageType(MessageType.HEARTBEAT);
                 ctx.writeAndFlush(rpcRequest);
-            } else if (idleStateEvent.state().equals(IdleState.ALL_IDLE)) {
-                System.out.println("ALL");
             }
         }else {
             super.userEventTriggered(ctx, evt);

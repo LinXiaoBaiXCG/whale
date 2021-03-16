@@ -35,4 +35,3 @@ whale
 2. 多注册中心支持
 3. 添加LRU、LFU、一致性HASH负载均衡
 4. 支持自定义Filter
-5. Netty重用Channel避免重复连接服务端

@@ -48,7 +48,6 @@ public class NettyClient {
     }
 
     public void connect() throws InterruptedException {
-        try {
         bootstrap = new Bootstrap();
         bootstrap.group(group)
                 //指定传输使用的Channel
@@ -65,36 +64,18 @@ public class NettyClient {
                         // 解码器
                         pipeline.addLast(new MessageDecoder(RpcResponse.class, GlobalConfig.serializeType));
                         // 心跳控制
-                        pipeline.addLast(new IdleStateHandler(0,10,0,TimeUnit.SECONDS));
+                        pipeline.addLast(new IdleStateHandler(0, 10, 0, TimeUnit.SECONDS));
                         pipeline.addLast(new NettyClientHandler());
                     }
                 });
-            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
-            this.channelProvider = new ChannelProvider();
-        } finally {
-            scheduledExecutorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        TimeUnit.SECONDS.sleep(5);
-                        try {
-                            log.info("重连服务端");
-                            connect();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
+        bootstrap.connect(host, port).sync();
+        this.channelProvider = new ChannelProvider();
     }
 
     public CompletableFuture<RpcResponse> send(RpcRequest request) throws InterruptedException {
         CompletableFuture<RpcResponse> responseCompletableFuture = new CompletableFuture<>();
         Channel channel = getChannel(new InetSocketAddress(host, port));
-        if (channel.isActive()){
+        if (channel.isActive()) {
             NettyClientHandler.RESPONSE_FUTURES_FUTURE_MAP.put(request.getRequestId(), responseCompletableFuture);
             channel.writeAndFlush(request).addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
