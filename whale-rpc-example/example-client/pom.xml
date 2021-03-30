@@ -39,6 +39,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.25</version>
 		</dependency>
+		<dependency>
+			<groupId>io.github.linxiaobaixcg</groupId>
+			<artifactId>example-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 </project>
