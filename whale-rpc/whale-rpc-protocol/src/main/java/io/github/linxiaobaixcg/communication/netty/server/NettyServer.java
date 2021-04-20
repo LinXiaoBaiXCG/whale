@@ -12,6 +12,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -78,10 +79,12 @@ public class NettyServer {
         }
     }
 
-    public void start() throws Exception {
+    public void start() {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
-        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
-        serverBootstrap.group(eventLoopGroup)
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+        serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 1024)
                 .handler(new LoggingHandler())
@@ -98,7 +101,14 @@ public class NettyServer {
                         pipeline.addLast(new NettyServerHandler(handlerMap));
                     }
                 });
-        serverBootstrap.bind(serviceIp, servicePort).sync();
+            serverBootstrap.bind(serviceIp, servicePort).sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }finally {
+            log.error("shutdown bossGroup and workerGroup");
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
         log.info("成功启动服务,host:{},port:{}", serviceIp, servicePort);
         //服务注册
         handlerMap.keySet().forEach(serviceName -> {
@@ -109,23 +119,6 @@ public class NettyServer {
                 throw new RuntimeException("服务注册失败");
             }
             log.info("成功注册服务，服务名称：{},服务地址：{}", serviceName, serviceIp + ":" + servicePort);
-        });
-    }
-
-    /**
-     * 如果端口绑定失败，端口数+1,重新绑定
-     *
-     * @param serverBootstrap
-     * @param port
-     */
-    public void bind(final ServerBootstrap serverBootstrap, String serviceIp, int port) {
-        serverBootstrap.bind(serviceIp, port).addListener(future -> {
-            if (future.isSuccess()) {
-                log.info("端口[ {} ] 绑定成功", port);
-            } else {
-                log.error("端口[ {} ] 绑定失败", port);
-                bind(serverBootstrap, serviceIp, port + 1);
-            }
         });
     }
 }
