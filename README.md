@@ -25,6 +25,9 @@ whale
 
 ## 如何运行
 1. 克隆代码
+~~~
+git clone git@github.com:LinXiaoBaiXCG/whale.git
+~~~
 2. 安装Zookeeper
 3. 配置修改
 4. 运行服务端
