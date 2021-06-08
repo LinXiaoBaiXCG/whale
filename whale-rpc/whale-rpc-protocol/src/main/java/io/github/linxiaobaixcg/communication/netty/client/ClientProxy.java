@@ -12,6 +12,7 @@ import io.github.linxiaobaixcg.service.LoadBalance;
 import io.github.linxiaobaixcg.handler.LoadBalanceHandler;
 import io.github.linxiaobaixcg.service.impl.ZkDiscoverImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.InvocationHandler;
@@ -51,7 +52,7 @@ public class ClientProxy<T> implements InvocationHandler {
         rpcRequest.setMessageType(MessageType.DATA);
         log.info("请求内容: {}", rpcRequest);
         String serviceName = method.getDeclaringClass().getName();
-        if (null != version && !"".equals(version)) {
+        if (StringUtils.isNotBlank(version)) {
             serviceName += "-" + version;
         }
         discoverService = new ZkDiscoverImpl(GlobalConfig.ZK_ADDRESS);
